@@ -88,7 +88,7 @@ const clearMessage = () =>{
           :description="item.description"
           :price="item.price"
           :imgUrl="item.imgUrl"
-          @add-to-cart="handleAddToCart(item.title,item.price)"
+          @add-to-cart="handleAddToCart"
         />
       </div>
     </div>
@@ -101,7 +101,7 @@ const clearMessage = () =>{
       :title="item.title"
       :price="item.price"
       :count="item.count"
-      @del-cart-item="handleDelItem(item.id)"
+      @del-cart-item="handleDelItem"
       />
       </ul>
       <h3 class="text-end" v-if="sum > 0">總金額:{{sum}}</h3>

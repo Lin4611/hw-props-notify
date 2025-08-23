@@ -5,7 +5,7 @@
             <div class="card-body">
               <h5 class="card-title">{{ title }}</h5>
               <p class="card-text">{{ description }}</p>
-              <p class="fw-bold text-primary">{{ price }}</p>
+              <p class="fw-bold text-primary">${{ price }}</p>
               <button class="btn btn-success w-100" @click.prevent="addToCart"> 加入購物車 </button>
             </div>
         </div>
