@@ -5,7 +5,7 @@
             <small class="text-muted">數量：{{count}}</small>
         </div>
         <div>
-            <span class="text-muted">${{price*count}}</span>
+            <span class="text-muted">$ {{price*count}} </span>
             <button class="btn btn-sm btn-outline-danger ms-2" @click.prevent="delCartItem"> 移除 </button>
         </div>
     </li>
