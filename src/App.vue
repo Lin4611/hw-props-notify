@@ -1,8 +1,8 @@
 <script setup>
-import { ref,computed, provide } from 'vue';
+import { ref,computed,provide } from 'vue';
 import ProductItem from './components/ProductItem.vue';
-import Cart from './components/Cart.vue';
-import Notify from './components/Notify.vue';
+import CartItem from './components/CartItem.vue';
+import ToastMessage from './components/ToastMessage.vue';
   const datas=ref([
     {
       title:'耳罩式藍牙耳機',
@@ -36,19 +36,23 @@ import Notify from './components/Notify.vue';
     }
   ]);
   const cart=ref([]);
-  const message=ref('');
-  provide('message',message);
-  const notifystate=(msg)=>{
-    message.value = msg;
+  const messages=ref([]);
+  provide('messages',messages);
+  const pushNotification=(msg)=>{
+    messages.value.push(
+    {
+      id:new Date().getTime(),  
+      text:msg
+    });
     setTimeout(()=>{
-      message.value='';
+      messages.value.shift();
     },3000)
   }
   const handleAddToCart=(item)=>{
-    notifystate(`${item.title}已加入購物車`);
-    if(cart.value.find(i=>i.title===item.title)){
-      const index=cart.value.findIndex(i=>i.title===item.title);
-      cart.value[index].count+=1;
+    pushNotification(`${item.title}已加入購物車`);
+    const existingItemIndex=cart.value.findIndex(i=>i.title===item.title);
+    if(existingItemIndex !==- 1){
+      cart.value[existingItemIndex].count+=1;
     }else{
       cart.value.push({
       id:new Date().getTime(),
@@ -70,9 +74,12 @@ import Notify from './components/Notify.vue';
       cart.value.splice(index,1);
     }
   }
-const clearMessage = () =>{
-    message.value='';
-}
+  const clearMessage = (id) =>{
+    const index = messages.value.findIndex(i=>i.id===id);
+    if(index !== -1){
+      messages.value.splice(index,1);
+    }
+  };
 
 </script>
 
@@ -84,10 +91,7 @@ const clearMessage = () =>{
       <h2 class="mb-3">商品列表</h2>
       <div class="row">
         <ProductItem  v-for="(item,index) in datas" :key="index"
-          :title="item.title"
-          :description="item.description"
-          :price="item.price"
-          :imgUrl="item.imgUrl"
+          :product="item"
           @add-to-cart="handleAddToCart"
         />
       </div>
@@ -96,11 +100,8 @@ const clearMessage = () =>{
     <div class="col-md-4">
       <h2 class="mb-3">購物車</h2>
       <ul class="list-group mb-3">
-      <Cart v-for="item in cart" :key="item.id"
-      :id="item.id"
-      :title="item.title"
-      :price="item.price"
-      :count="item.count"
+      <CartItem v-for="item in cart" :key="item.id"
+      :cartitem="item"
       @del-cart-item="handleDelItem"
       />
       </ul>
@@ -110,7 +111,8 @@ const clearMessage = () =>{
   </div>
 
   <!-- 通知元件 -->
-  <Notify v-if="message" @clear-msg="clearMessage"/>
+  <ToastMessage @clear-msg="clearMessage"/>
+  
 </div>
   
 </template>
